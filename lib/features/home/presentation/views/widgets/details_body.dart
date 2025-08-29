@@ -18,24 +18,24 @@ class _DetailsBodyState extends State<DetailsBody> {
   @override
   void initState() {
     context.read<HomeCubit>().getPhotosData(widget.newsDetailsModel.id);
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    String filePath =
-        context
-            .read<HomeCubit>()
-            .photoModel
-            ?.profiles[context.watch<HomeCubit>().photoIndex]
-            .filePath ??
-        "";
     return ListView(
       children: [
         AspectRatio(
           aspectRatio: 1.2,
           child: Image.network(
-            filePath,
+            context
+                    .watch<HomeCubit>()
+                    .photoModel
+                    ?.profiles[context.watch<HomeCubit>().photoIndex]
+                    .filePath ??
+                widget.newsDetailsModel.profilePath,
+
             width: double.infinity,
             fit: BoxFit.fill,
           ),
