@@ -11,6 +11,8 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit(this.homeRepo) : super(HomeInitial());
   final HomeRepo homeRepo;
   NewsModel? newsList;
+  PhotosModel? photosModel;
+  int photoIndex = 0;
   getNewsData() async {
     emit(GetNewsDataLoading());
     var res = await homeRepo.getNewsData();

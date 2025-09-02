@@ -10,7 +10,7 @@ class BiographBody extends StatefulWidget {
 }
 
 class _BiographBodyState extends State<BiographBody> {
-  bool isReadMore = false;
+  bool isReadMore = true;
   @override
   Widget build(BuildContext context) {
     return RichText(

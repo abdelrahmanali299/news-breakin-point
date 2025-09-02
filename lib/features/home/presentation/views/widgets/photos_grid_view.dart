@@ -16,17 +16,16 @@ class _PhotosGridViewState extends State<PhotosGridView> {
     super.initState();
   }
 
-  PhotosModel? photosModel;
-  int photoIndex = 0;
   @override
   Widget build(BuildContext context) {
+    var homeCubit = context.read<HomeCubit>();
     return BlocConsumer<HomeCubit, HomeState>(
       listener: (context, state) {
         if (state is GetPhotosDataSuccess) {
-          photosModel = state.photosModel;
+          homeCubit.photosModel = state.photosModel;
         }
         if (state is ChangePhotoSuccess) {
-          photoIndex = state.index;
+          homeCubit.photoIndex = state.index;
         }
       },
       buildWhen: (previous, current) =>
@@ -61,7 +60,7 @@ class _PhotosGridViewState extends State<PhotosGridView> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: photoIndex == index
+                      color: homeCubit.photoIndex == index
                           ? Colors.blue
                           : Colors.transparent,
                     ),
@@ -70,14 +69,14 @@ class _PhotosGridViewState extends State<PhotosGridView> {
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
                       fit: BoxFit.fill,
-                      photosModel?.profiles[index].filePath ?? "",
+                      homeCubit.photosModel?.profiles[index].filePath ?? "",
                     ),
                   ),
                 ),
               ),
             );
           },
-          itemCount: photosModel?.profiles.length ?? 0,
+          itemCount: homeCubit.photosModel?.profiles.length ?? 0,
         );
       },
     );

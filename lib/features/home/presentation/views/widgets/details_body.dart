@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app_breakin_point/features/home/data/models/news_details_model.dart';
@@ -23,26 +24,29 @@ class _DetailsBodyState extends State<DetailsBody> {
     super.initState();
   }
 
-  int index = 0;
-  PhotosModel? photosModel;
   @override
   Widget build(BuildContext context) {
+    var homeCubit = context.read<HomeCubit>();
     return ListView(
       children: [
         BlocConsumer<HomeCubit, HomeState>(
           listener: (context, state) {
             if (state is ChangePhotoSuccess) {
-              index = state.index;
+              homeCubit.photoIndex = state.index;
             } else if (state is GetPhotosDataSuccess) {
-              photosModel = state.photosModel;
+              homeCubit.photosModel = state.photosModel;
             }
           },
-          buildWhen: (previous, current) => current is ChangePhotoSuccess,
+          buildWhen: (previous, current) =>
+              current is ChangePhotoSuccess || current is GetPhotosDataSuccess,
           builder: (BuildContext context, HomeState state) {
             return AspectRatio(
               aspectRatio: 1.2,
               child: Image.network(
-                photosModel?.profiles[index].filePath ??
+                homeCubit
+                        .photosModel
+                        ?.profiles[homeCubit.photoIndex]
+                        .filePath ??
                     widget.newsDetailsModel.profilePath,
 
                 width: double.infinity,
