@@ -29,21 +29,16 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  PhotosModel? photoModel;
   getPhotosData(int id) async {
     emit(GetPhotosDataLoading());
     var res = await homeRepo.getPhotosData(id);
 
     res.fold((failure) => emit(GetPhotosDataError(failure)), (photosModel) {
-      photoModel = photosModel;
       emit(GetPhotosDataSuccess(photosModel));
     });
   }
 
-  int photoIndex = 0;
-
   changePhotoIndex(int index) {
-    photoIndex = index;
     emit(ChangePhotoSuccess(index));
   }
 }

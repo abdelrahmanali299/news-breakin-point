@@ -1,8 +1,9 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app_breakin_point/features/home/data/models/news_details_model.dart';
+import 'package:news_app_breakin_point/features/home/data/models/photos_model.dart';
 import 'package:news_app_breakin_point/features/home/presentation/manager/cubits/home_cubit.dart';
+import 'package:news_app_breakin_point/features/home/presentation/views/widgets/biograph_body.dart';
 import 'package:news_app_breakin_point/features/home/presentation/views/widgets/photos_grid_view.dart';
 
 class DetailsBody extends StatefulWidget {
@@ -22,23 +23,33 @@ class _DetailsBodyState extends State<DetailsBody> {
     super.initState();
   }
 
+  int index = 0;
+  PhotosModel? photosModel;
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        AspectRatio(
-          aspectRatio: 1.2,
-          child: Image.network(
-            context
-                    .watch<HomeCubit>()
-                    .photoModel
-                    ?.profiles[context.watch<HomeCubit>().photoIndex]
-                    .filePath ??
-                widget.newsDetailsModel.profilePath,
+        BlocConsumer<HomeCubit, HomeState>(
+          listener: (context, state) {
+            if (state is ChangePhotoSuccess) {
+              index = state.index;
+            } else if (state is GetPhotosDataSuccess) {
+              photosModel = state.photosModel;
+            }
+          },
+          buildWhen: (previous, current) => current is ChangePhotoSuccess,
+          builder: (BuildContext context, HomeState state) {
+            return AspectRatio(
+              aspectRatio: 1.2,
+              child: Image.network(
+                photosModel?.profiles[index].filePath ??
+                    widget.newsDetailsModel.profilePath,
 
-            width: double.infinity,
-            fit: BoxFit.fill,
-          ),
+                width: double.infinity,
+                fit: BoxFit.fill,
+              ),
+            );
+          },
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
@@ -58,29 +69,7 @@ class _DetailsBodyState extends State<DetailsBody> {
                 widget.newsDetailsModel.placeOfBirth,
                 style: TextStyle(fontSize: 16),
               ),
-              RichText(
-                text: TextSpan(
-                  text: !isReadMore
-                      ? widget.newsDetailsModel.biography
-                      : '${widget.newsDetailsModel.biography.substring(0, 300)}...',
-                  style: TextStyle(color: Colors.grey, height: 1.5),
-                  children: [
-                    TextSpan(
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          setState(() {
-                            isReadMore = !isReadMore;
-                          });
-                        },
-                      text: isReadMore ? 'Read More' : 'Read Less',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              BiographBody(newsDetailsModel: widget.newsDetailsModel),
             ],
           ),
         ),

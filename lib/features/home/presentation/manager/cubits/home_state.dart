@@ -42,6 +42,6 @@ class GetPhotosDataSuccess extends HomeState {
 }
 
 class ChangePhotoSuccess extends HomeState {
-  int index;
+  final int index;
   ChangePhotoSuccess(this.index);
 }

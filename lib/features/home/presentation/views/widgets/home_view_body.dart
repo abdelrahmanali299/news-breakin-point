@@ -21,7 +21,6 @@ class HomeViewBody extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  context.read<HomeCubit>().photoIndex = 0;
                   return NewsDetailsView();
                 },
               ),

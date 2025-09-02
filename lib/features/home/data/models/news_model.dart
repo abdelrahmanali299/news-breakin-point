@@ -134,7 +134,7 @@ class KnownFor {
     name: json["name"],
     originalName: json["original_name"],
     overview: json["overview"],
-    posterPath: json["poster_path"],
+    posterPath: json["poster_path"] ?? "",
     mediaType: mediaTypeValues.map[json["media_type"]]!,
     originalLanguage:
         originalLanguageValues.map[json["original_language"]] ??

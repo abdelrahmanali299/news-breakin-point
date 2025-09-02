@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:news_app_breakin_point/features/home/data/models/photos_model.dart';
 import 'package:news_app_breakin_point/features/home/presentation/manager/cubits/home_cubit.dart';
 
 class PhotosGridView extends StatefulWidget {
@@ -15,13 +16,25 @@ class _PhotosGridViewState extends State<PhotosGridView> {
     super.initState();
   }
 
+  PhotosModel? photosModel;
+  int photoIndex = 0;
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
+    return BlocConsumer<HomeCubit, HomeState>(
+      listener: (context, state) {
+        if (state is GetPhotosDataSuccess) {
+          photosModel = state.photosModel;
+        }
+        if (state is ChangePhotoSuccess) {
+          photoIndex = state.index;
+        }
+      },
       buildWhen: (previous, current) =>
           current is GetPhotosDataSuccess ||
           current is GetPhotosDataError ||
-          current is GetPhotosDataLoading,
+          current is GetPhotosDataLoading ||
+          current is ChangePhotoSuccess,
+
       builder: (context, state) {
         if (state is GetPhotosDataError) {
           return Center(child: Text(state.error));
@@ -48,7 +61,7 @@ class _PhotosGridViewState extends State<PhotosGridView> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: context.read<HomeCubit>().photoIndex == index
+                      color: photoIndex == index
                           ? Colors.blue
                           : Colors.transparent,
                     ),
@@ -57,19 +70,14 @@ class _PhotosGridViewState extends State<PhotosGridView> {
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
                       fit: BoxFit.fill,
-                      context
-                              .read<HomeCubit>()
-                              .photoModel
-                              ?.profiles[index]
-                              .filePath ??
-                          "",
+                      photosModel?.profiles[index].filePath ?? "",
                     ),
                   ),
                 ),
               ),
             );
           },
-          itemCount: context.read<HomeCubit>().photoModel?.profiles.length ?? 0,
+          itemCount: photosModel?.profiles.length ?? 0,
         );
       },
     );
